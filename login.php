@@ -8,6 +8,15 @@ require __DIR__ . '/views/header.php';
 <article>
     <h1>Login</h1>
 
+    <?php if (isset($_SESSION['errors'])) : ?>
+        <div class="errors">
+            <?php foreach ($_SESSION['errors'] as $error) : ?>
+                <p><?= $error; ?></p>
+            <?php endforeach; ?>
+            <?php unset($_SESSION['errors']); ?>
+        </div>
+    <?php endif; ?>
+
     <form style=" margin-bottom : 200px;" action="app/users/login.php" method="post">
         <div class="form-group">
             <label for="email">Email</label>

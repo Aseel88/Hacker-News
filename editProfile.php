@@ -92,18 +92,6 @@ if (isset($_SESSION['user']['id'])) {
 
         </div>
 
-        <!-- <div class="form-group">
-            <label for="password">Password</label>
-            <input class="form-control" type="password" name="password" id="password">
-            <small class="form-text text-muted">Edit your password (passphrase)*</small>
-        </div>
-
-        <div class="form-group">
-            <label for="confirmPassword"> Confirm Password</label>
-            <input class="form-control" type="password" name="confirmPassword" id="confirmPassword" required>
-            <small class="form-text text-muted">Please re-write your password (passphrase)*</small>
-        </div> -->
-
         <button type="submit" name="submit">Edit profile </button>
     </form>
 </article>
