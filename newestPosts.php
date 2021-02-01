@@ -263,7 +263,7 @@ $users = $statement->fetchAll(PDO::FETCH_ASSOC);
                                                     <p><?= $reply['firstName']; ?> replied:</p>
                                                     <p><?= $reply['content']; ?></p>
                                                     <small><?= $reply['created_at']; ?></small>
-                                                    <small><?= $reply['id']; ?></small>
+
                                                 </div><!-- end of display-replies -->
 
 

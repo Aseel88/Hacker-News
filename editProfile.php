@@ -29,7 +29,15 @@ if (isset($_SESSION['user']['id'])) {
 ?>
 <article>
     <h2>Edit your profile!</h2>
-
+    <!-- shows a message  -->
+    <?php if (isset($_SESSION['success'])) : ?>
+        <div class="message">
+            <?php foreach ($_SESSION['success'] as $successMessage) : ?>
+                <p><?= $successMessage; ?></p>
+            <?php endforeach; ?>
+            <?php unset($_SESSION['success']); ?>
+        </div>
+    <?php endif; ?>
 
     <?php foreach ($errors as $error) : ?>
         <p class="error"><?php echo $error; ?></p>
@@ -84,7 +92,7 @@ if (isset($_SESSION['user']['id'])) {
 
         </div>
 
-        <div class="form-group">
+        <!-- <div class="form-group">
             <label for="password">Password</label>
             <input class="form-control" type="password" name="password" id="password">
             <small class="form-text text-muted">Edit your password (passphrase)*</small>
@@ -94,24 +102,15 @@ if (isset($_SESSION['user']['id'])) {
             <label for="confirmPassword"> Confirm Password</label>
             <input class="form-control" type="password" name="confirmPassword" id="confirmPassword" required>
             <small class="form-text text-muted">Please re-write your password (passphrase)*</small>
-        </div>
+        </div> -->
 
         <button type="submit" name="submit">Edit profile </button>
     </form>
 </article>
 
+<a href="/changePassword.php">Change Your Password</a>
 
 <article class="delete-form">
-    <!-- shows a message what to type in, if it was not "delete" -->
-    <?php if (isset($_SESSION['success'])) : ?>
-        <div class="message">
-            <?php foreach ($_SESSION['success'] as $successMessage) : ?>
-                <p><?= $successMessage; ?></p>
-            <?php endforeach; ?>
-            <?php unset($_SESSION['success']); ?>
-        </div>
-    <?php endif; ?>
-
     <!-- form to delete everything -->
     <form action="app/users/delete.php" method="post">
         <p class="delete-text">Please type in "delete" to permanently delete your profile with every post, comment, reply and upvote made by you.</p>

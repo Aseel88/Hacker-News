@@ -22,6 +22,15 @@ if (isset($_SESSION['user']['id'])) {
 <article>
     <h1>Your Personal Page</h1>
 
+    <?php if (isset($_SESSION['success'])) : ?>
+        <div class="success-message">
+            <?php foreach ($_SESSION['success'] as $successMessage) : ?>
+                <p><?= $successMessage; ?></p>
+            <?php endforeach; ?>
+            <?php unset($_SESSION['success']); ?>
+        </div>
+    <?php endif; ?>
+
     <input type="hidden" name="id" value="<?php echo $user['id']; ?>">
     <div class="avatar">
         <?php if (!$user['avatar']) : ?>

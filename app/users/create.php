@@ -4,8 +4,8 @@ declare(strict_types=1);
 
 require __DIR__ . '/../autoload.php';
 
-$msgs = [];
-$errors = [];
+// $msgs = [];
+// $errors = [];
 
 $statement = $pdo->query('SELECT email FROM users');
 if (!$statement) {
@@ -23,8 +23,8 @@ if (isset($_POST['email'], $_POST['password'], $_POST['confirmPassword'])) {
 
     $hash = password_hash($password, PASSWORD_DEFAULT);
 
-    if ($password != $confirmPassword) {
-        $msg = "Please Check Your Password!";
+    if ($password !== $confirmPassword) {
+        errorMessage("Please Check Your Password!");
         redirect('/create.php');
     }
 
@@ -43,7 +43,7 @@ if (isset($_POST['email'], $_POST['password'], $_POST['confirmPassword'])) {
     $statement->execute();
     redirect('/welcome.php');
 }
-// }
+
 
 
 redirect('/');

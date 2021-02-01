@@ -33,7 +33,7 @@ if (isset($_SESSION['user']['id'])) {
             $destination = __DIR__ . '/uploads/' . $avatarName;
 
             move_uploaded_file($avatar['tmp_name'], $destination);
-            $message = 'The file was successfully uploaded!';
+            successMessage("The file was successfully uploaded!");
         }
 
         $query = 'UPDATE users

@@ -8,6 +8,7 @@ require __DIR__ . '/../../views/header.php';
 if (isset($_SESSION['user'])) {
     $userId = $_SESSION['user']['id'];
 
+
     if (isset($_POST['title'], $_POST['link'], $_POST['description'], $_POST['id'])) {
         $title = filter_var($_POST['title'], FILTER_SANITIZE_STRING);
         $link = filter_var($_POST['link'], FILTER_SANITIZE_URL);

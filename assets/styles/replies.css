@@ -5,7 +5,11 @@
   color: white;
   width: 30%;
 }
-
+.errors {
+  background-color: rgb(13, 65, 235);
+  color: white;
+  width: 30%;
+}
 .replies {
   padding-left: 50px;
   padding-top: 25px;
