@@ -32,11 +32,11 @@ if (isset($_POST['like'])) {
         $statement->bindParam(':postId', $postId, PDO::PARAM_INT);
         $statement->execute();
 
-        $numberOfLikesComments = numberOfLikesComments($pdo, $postId, $commentId);
+        $numberOfLikes = numberOfLikes($pdo, $postId);
         $status = true;
 
         $response = [
-            'numberOfLikesComments' => $numberOfLikesComments,
+            'numberOfLikes' => $numberOfLikes,
             'status' => $status
         ];
         echo json_encode($response);
