@@ -29,7 +29,7 @@ if (isset($_SESSION['user']['id'])) {
 
 
 
-        $query = 'INSERT INTO comments (userId, postId, comment ,createdAt) VALUES (:userId, :postId, :comment, datetime())';
+        $query = 'INSERT INTO comments (userId, postId, comment ,createdAt, likes) VALUES (:userId, :postId, :comment, datetime(), 0)';
 
         $statement = $pdo->prepare($query);
 

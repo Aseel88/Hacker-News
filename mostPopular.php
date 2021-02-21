@@ -24,19 +24,11 @@ $users = $statement->fetchAll(PDO::FETCH_ASSOC);
 
         <h1><?php echo $config['title']; ?></h1>
 
-        <!-- <?php if (isset($_SESSION['user'])) : ?>
+        <?php if (isset($_SESSION['user'])) : ?>
             <p>Welcome
                 <?php echo $_SESSION['user']['firstName']; ?>
                 !
             </p>
-        <?php endif; ?> -->
-
-        <?php foreach ($errors as $error) : ?>
-            <p class="error"><?php echo $error; ?></p>
-        <?php endforeach; ?>
-
-        <?php if (isset($message)) : ?>
-            <p class="success"><?php echo $message; ?></p>
         <?php endif; ?>
 
         <ul>
@@ -65,7 +57,7 @@ $users = $statement->fetchAll(PDO::FETCH_ASSOC);
                             <p><?php echo $post['description']; ?></p>
                         </div>
                         <div class="time">
-                            <?php echo $post['createdAt']; ?>
+                            <time class="text-secondary"><?= formatDate($post['createdAt']); ?></time>
                         </div>
                         <input type="hidden" value="<?php $postId = $post['id']; ?>">
 
@@ -74,54 +66,24 @@ $users = $statement->fetchAll(PDO::FETCH_ASSOC);
                                 <div class="postSection">
                                     <div class="likeSection" ?>
                                         <div class="likeCounter">
-                                            <?php if ($post['likes'] > 1) : ?>
-                                                <?php echo $post['likes'] . ' ' . "likes"; ?>
-                                            <?php else : ?>
-                                                <?php echo $post['likes'] . ' ' . "like"; ?>
-                                            <?php endif; ?>
+                                            <p class="numberOfLikes" data-id="<?= $post['id']; ?>"><?= numberOfLikes($pdo, $post['id']) ?> </p>
                                         </div>
-                                        <?php if (isset($_SESSION['user']['id'])) : ?>
 
-                                            <?php $user = $_SESSION['user'];
-
-                                            $userId = $_SESSION['user']['id'];
-
-                                            $statement = $pdo->query('SELECT id FROM likes WHERE userId = :userId AND postId = :postId;');
-
-                                            if (!$statement) {
-                                                die(var_dump($pdo->errorInfo()));
-                                            }
-                                            $statement->bindParam(':userId', $userId, PDO::PARAM_STR);
-                                            $statement->bindParam(':postId', $postId, PDO::PARAM_STR);
-
-
-                                            $statement->execute();
-
-                                            $like = $statement->fetch(PDO::FETCH_ASSOC); ?>
-
-
-
-                                            <div class="likeButton">
-                                                <?php if ($like) : ?>
-                                                    <!-- user already likes post -->
-                                                    <form class="unlike" action="unlike.php" method="POST">
-                                                        <input type="hidden" name="postId" value="<?php echo $post['id']; ?>">
-                                                        <input type="hidden" name="userId" value="<?php echo $userId; ?>">
-                                                        <input type="hidden" name="id" value="<?php echo $like['id']; ?>">
-                                                        <button type="submit" class="unlike" name="unlike"> unlike </button>
-                                                    </form>
+                                        <?php if (isset($_SESSION['user'])) : ?>
+                                            <form class="like postForm" action="app/posts/likes.php" method="post">
+                                                <input type="hidden" id="postId" name="like" value="<?= $post['id']; ?>"></input>
+                                                <?php if (isLiked($pdo, $_SESSION['user']['id'], $post['id'])) : ?>
+                                                    <button style="background-color: blue;" class=" likeBtn" type="submit" value="Submit" data-id="<?= $post['id']; ?>"></button>
                                                 <?php else : ?>
-                                                    <!-- user has not yet liked post -->
-                                                    <form class="like" action="like.php" method="POST">
-                                                        <input type="hidden" name="id" value="<?php echo $post['id']; ?>">
-                                                        <input type="hidden" name="userId" value="<?php echo $userId; ?>">
-                                                        <button type="submit" class="like" name="like"> like </button>
-                                                    </form>
-
+                                                    <button style="background-color: grey;" class="likeBtn" type="submit" value="Submit" data-id="<?= $post['id']; ?>"></button>
                                                 <?php endif; ?>
-                                            <?php endif; ?>
+                                            </form>
+                                        <?php else : ?>
+                                            <form class="likeOffline" action="app/posts/likes.php" method="post">
+                                                <button name="likeOffline" class="likeBtnOffline" style="background-color: grey;"></button>
+                                            </form>
+                                        <?php endif; ?>
 
-                                            </div>
                                     </div>
                                     <!-- Add comment -->
                                     <?php if (isset($_SESSION['user']['id'])) : ?>
@@ -151,8 +113,6 @@ $users = $statement->fetchAll(PDO::FETCH_ASSOC);
 
                                 <div class="ulComments">
 
-
-
                                     <?php $statement = $pdo->query('SELECT * FROM comments
                                                                      INNER JOIN users ON users.id = comments.userId
                                                                     WHERE comments.postId = :postId ;');
@@ -172,7 +132,9 @@ $users = $statement->fetchAll(PDO::FETCH_ASSOC);
                                     <?php foreach ($comments as $comment) : ?>
 
                                         <input type="hidden" name="commentId" value="<?php echo $comment['commentId']; ?>">
-                                        <input type="hidden" name="postId" value="<?php echo $comment['postId']; ?>">
+
+                                        <input type="hidden" name="postId" value="<?php echo $postId; ?>">
+
                                         <input type="hidden" name="userId" value="<?php echo $comment['userId']; ?>">
 
                                         <div class="author">
@@ -198,8 +160,32 @@ $users = $statement->fetchAll(PDO::FETCH_ASSOC);
                                         <div class="commentContent">
                                             <?php echo $comment['comment']; ?>
                                         </div>
+                                        <div class="likeCounterComment">
+                                            <p class="numberOfLikesComments" data-id="<?php echo $comment['commentId']; ?>"><?= numberOfLikesComments($pdo, $comment['commentId']) ?> </p>
+                                        </div>
+                                        <?php if (isset($_SESSION['user'])) : ?>
+                                            <form class="like commentForm" action="app/comments/likes.php" method="post">
+
+                                                <input type="hidden" id="commentId" name="like" value="<?php echo $comment['commentId']; ?>"></input>
+
+
+
+                                                <?php if (isLikedComment($pdo, $_SESSION['user']['id'], $comment['commentId'])) : ?>
+
+                                                    <button style="background-color: blue;" class=" clikeBtn" type="submit" value="Submit" data-id="<?php echo $comment['commentId']; ?>"></button>
+                                                <?php else : ?>
+                                                    <button style="background-color: grey;" class="clikeBtn" type="submit" value="Submit" data-id="<?php echo $comment['commentId']; ?>"></button>
+                                                <?php endif; ?>
+                                            </form>
+                                        <?php else : ?>
+                                            <form class="likeOffline" action="app/comments/likes.php" method="post">
+                                                <button name="likeOffline" class="likeBtnOffline" style="background-color: grey;"></button>
+                                            </form>
+                                        <?php endif; ?>
+
+
                                         <div class="commentTime">
-                                            <?php echo $comment['createdAt']; ?>
+                                            <time class="text-secondary"><?= formatDate($comment['createdAt']); ?></time>
                                         </div>
                                         <div class="commentEdit">
                                             <?php if (isset($_SESSION['user']['id'])) : ?>
@@ -212,6 +198,7 @@ $users = $statement->fetchAll(PDO::FETCH_ASSOC);
                                                 <?php endif; ?>
                                             <?php endif; ?>
                                         </div>
+
 
 
 
@@ -266,7 +253,6 @@ $users = $statement->fetchAll(PDO::FETCH_ASSOC);
                                                     <p><?= $reply['content']; ?></p>
                                                     <small><?= $reply['created_at']; ?></small>
 
-
                                                 </div><!-- end of display-replies -->
 
 
@@ -300,6 +286,7 @@ $users = $statement->fetchAll(PDO::FETCH_ASSOC);
                                                                     <button type="submit" class="delete-btn">Delete</button>
                                                                 </form>
                                                             </div>
+
                                                         </div><!-- end of edit-reply-form -->
                                                     <?php endif; ?>
                                                 <?php endif; ?>
@@ -308,12 +295,6 @@ $users = $statement->fetchAll(PDO::FETCH_ASSOC);
                                             <?php endforeach; ?>
 
                                         </div> <!-- end of replies -->
-
-
-
-
-
-
 
                                     <?php endforeach; ?>
                                 </div>
@@ -324,6 +305,7 @@ $users = $statement->fetchAll(PDO::FETCH_ASSOC);
             </ol>
 
         </div>
+
 
     </article>
 </div>
